@@ -11,9 +11,11 @@ from app.config import get_settings
 settings = get_settings()
 
 db_url = settings.database_url or "sqlite:///./storage/db/sigma.db"
-# Supabase and Render often supply URLs starting with postgres://, SQLAlchemy requires postgresql://
+# Supabase and Render URLs: ensure postgresql+psycopg2 driver is used
 if db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql://", 1)
+    db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
+elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+"):
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 if db_url.startswith("sqlite"):
     db_file_path = db_url.replace("sqlite:///", "")
