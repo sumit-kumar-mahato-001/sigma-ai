@@ -12,7 +12,10 @@ This keeps the pipeline real and working without any paid OCR API:
 from __future__ import annotations
 import os
 from pypdf import PdfReader
-from pptx import Presentation
+try:
+    from pptx import Presentation
+except ImportError:
+    Presentation = None
 
 
 def extract_pdf(path: str) -> list[tuple[str, str]]:
@@ -26,6 +29,8 @@ def extract_pdf(path: str) -> list[tuple[str, str]]:
 
 
 def extract_pptx(path: str) -> list[tuple[str, str]]:
+    if Presentation is None:
+        return [("Slide", f"[python-pptx not available for {os.path.basename(path)}]")]
     prs = Presentation(path)
     chunks = []
     for i, slide in enumerate(prs.slides, start=1):
