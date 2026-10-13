@@ -27,8 +27,11 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup():
-    Base.metadata.create_all(bind=engine)
-    seed()
+    try:
+        Base.metadata.create_all(bind=engine)
+        seed()
+    except Exception as e:
+        print(f"[Database Startup Notice]: {e}")
 
 
 @app.get("/api/health")
